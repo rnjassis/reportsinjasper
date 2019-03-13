@@ -5,29 +5,26 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
 
-public class ReportWithSub {
+public class ReportWithSub extends ReportBase{
 
 	private String nome;
 	private String cpf;
 
-	Map<String, Object> parameters;
 	List<SubReportData> subReport;
 
-	JasperReport relatorio;
 
-	public ReportWithSub() {
-		
+	public ReportWithSub () {
+		super();
 		try {
 			
-			relatorio = (JasperReport) JRLoader.loadObject(getClass().getResourceAsStream("/reports/relatorio.jasper"));
+			report = (JasperReport) JRLoader.loadObject(getClass().getResourceAsStream("/reports/relatorio.jasper"));
 
 			subReport = new ArrayList<>();
 
@@ -57,28 +54,28 @@ public class ReportWithSub {
 		subReport.add(subRepData);
 	}
 
-	public JasperPrint makeReport() {
-		this.setParameters();
-		
-		try {
-
-			JasperPrint print = JasperFillManager.fillReport(relatorio, parameters, new JREmptyDataSource());
-
-			return print;
-
-		} catch (JRException e) {
-			e.printStackTrace();
-		}
-
-		return new JasperPrint();
-	}
-
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
 
 	public void setCpf(String cpf) {
 		this.cpf = cpf;
+	}
+	
+	@Override
+	public Map<String, Object> getParameters() {
+		setParameters();
+		return parameters;
+	}
+
+	@Override
+	public JasperReport getReport() {
+		return report;
+	}
+
+	@Override
+	public JRDataSource getDataSource() {
+		return new JREmptyDataSource();
 	}
 	
 	public class SubReportData {
